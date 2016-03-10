@@ -1,14 +1,14 @@
 require 'test/unit'
 require 'ttml'
 
-class Ttml::LineTest < Test::Unit::TestCase
+class LineTest < Test::Unit::TestCase
   def test_new
-    line = Ttml::Line.new
+    line = TTML::Line.new
     assert_equal true, line.empty?
   end
 
   def test_time_str
-    line = Ttml::Line.new
+    line = TTML::Line.new
     line.start_time = 224.2
     line.end_time   = 244.578
 
@@ -16,7 +16,7 @@ class Ttml::LineTest < Test::Unit::TestCase
   end
 
   def test_clean_text
-    line = Ttml::Line.new(text: ["<p align=\"left\" ><font color=\"#ffa500\">Signori Consiglieri</font></p>"])
+    line = TTML::Line.new(text: ["<p align=\"left\" ><font color=\"#ffa500\">Signori Consiglieri</font></p>"])
     assert_equal ["Signori Consiglieri"], line.cleaned_text
   end
 

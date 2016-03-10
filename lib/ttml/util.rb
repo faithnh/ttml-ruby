@@ -1,4 +1,4 @@
-module Ttml
+module TTML
   class Util
     class << self
 

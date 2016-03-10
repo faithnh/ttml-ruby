@@ -4,11 +4,11 @@ require 'ttml'
 class DocumentTest < Test::Unit::TestCase
 
   def setup
-    @doc = Ttml::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
+    @doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
   end
 
   def test_class
-    assert @doc.is_a?(Ttml::Document)
+    assert @doc.is_a?(TTML::Document)
   end
 
   def test_copyright
@@ -35,7 +35,7 @@ class DocumentTest < Test::Unit::TestCase
 
   def test_other_file
     # (with different namespaces)
-    doc = Ttml::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample_2.xml'))
+    doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample_2.xml'))
     assert_equal 'Timed Text DFPX', doc.title
     assert @doc.subtitle_stream.is_a?(Array)
   end
@@ -47,7 +47,7 @@ class DocumentTest < Test::Unit::TestCase
   end
 
   def test_parse
-    doc = Ttml::Document.parse(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
+    doc = TTML::Document.parse(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
     assert_equal 31, doc.lines.length
     assert_equal 1, doc.lines.first.sequence
     assert_equal 31, doc.lines.last.sequence

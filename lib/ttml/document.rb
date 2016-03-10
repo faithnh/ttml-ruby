@@ -1,4 +1,4 @@
-module Ttml
+module TTML
   class Document
     attr_reader :doc
     attr_reader :namespaces

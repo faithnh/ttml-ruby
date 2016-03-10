@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "ttml-ruby"
   gem.require_paths = ["lib"]
-  gem.version       = Ttml::VERSION
+  gem.version       = TTML::VERSION
 
   gem.add_runtime_dependency "nokogiri"
   gem.add_runtime_dependency "trollop"

@@ -1,6 +1,6 @@
 require "nokogiri"
 
-module Ttml; end
+module TTML; end
 
 require "ttml/version"
 require "ttml/util"

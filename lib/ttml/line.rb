@@ -1,4 +1,4 @@
-module Ttml
+module TTML
   class Line
     attr_accessor :display_coordinates
     attr_accessor :style
