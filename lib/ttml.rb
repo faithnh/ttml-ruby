@@ -1,6 +1,9 @@
 require "nokogiri"
 
-module TTML; end
+module TTML
+  class InvalidNamespace < StandardError; end
+  class UnknownNamespaceType < StandardError; end
+end
 
 require "ttml/version"
 require "ttml/util"

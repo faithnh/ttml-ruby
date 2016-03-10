@@ -2,24 +2,18 @@ module TTML
   class Document
     attr_reader :doc
     attr_reader :namespaces
+    attr_reader :namespace_type
     attr_writer :lines
+
+    NAMESPACES = {
+      :ttaf1 => "http://www.w3.org/2006/10/ttaf1",
+      :ttml1 => "http://www.w3.org/ns/ttml"
+    }
 
     def initialize(file_or_stream)
       stream      = file_or_stream.is_a?(IO) ? file_or_stream : File.open(file_or_stream)
       @doc        = Nokogiri::XML(stream)
       @namespaces = @doc.collect_namespaces
-
-      @subs_ns = if @namespaces.invert["http://www.w3.org/2006/10/ttaf1"]
-        @namespaces.invert["http://www.w3.org/2006/10/ttaf1"].sub(/^xmlns:/, '')
-      elsif @namespaces.invert["http://www.w3.org/2006/10/ttaf1"]
-        @namespaces.invert["http://www.w3.org/2006/10/ttaf1"].sub(/^xmlns:/, '')
-      end
-
-      @meta_ns = if @namespaces.invert["http://www.w3.org/2006/10/ttaf1#metadata"]
-        @namespaces.invert["http://www.w3.org/2006/10/ttaf1#metadata"].sub(/^xmlns:/,'')
-      elsif @namespaces.invert["http://www.w3.org/ns/ttml#metadata"]
-        @namespaces.invert["http://www.w3.org/ns/ttml#metadata"].sub(/^xmlns:/,'')
-      end
     end
 
     def self.parse(file_or_stream)
@@ -30,9 +24,8 @@ module TTML
 
     def subtitle_stream(from = 0.0, to = nil)
       to = to || 99999999999.99
-      @all_subs ||= doc.xpath("/#{ @subs_ns }:tt/#{ @subs_ns }:body/#{ @subs_ns }:div/#{ @subs_ns }:p")
+      @all_subs ||= doc.xpath("/#{ subs_ns }:tt/#{ subs_ns }:body/#{ subs_ns }:div/#{ subs_ns }:p")
       @all_subs.select {|n|
-        # puts "Vedo se #{ n['begin'].to_f } >= #{ from } e se #{ n['end'].to_f } <= #{ to }"
         (n['begin'].to_f >= from) && (n['end'].to_f <= to)
       }
     end
@@ -42,17 +35,9 @@ module TTML
         line = Line.new
 
         begin
-          line.sequence = index + 1
-
-          if (line.start_time = Util.timecode(Util.smpte_time(node.attributes['begin'].value))) == nil
-            line.error = "#{index}, Invalid formatting of start timecode, [#{node.attributes['begin'].value}]"
-            $stderr.puts line.error if @debug
-          end
-
-          if (line.end_time = Util.timecode(Util.smpte_time(node.attributes['end'].value))) == nil
-            line.error = "#{index}, Invalid formatting of end timecode, [#{node.attributes['end'].value}]"
-            $stderr.puts line.error if @debug
-          end
+          line.sequence   = index + 1
+          line.start_time = parse_time_from_node(node, 'begin', line)
+          line.end_time   = parse_time_from_node(node, 'end', line)
 
           if node.attributes['style'] && node.attributes['style'].value
             line.style = node.attributes['style'].value
@@ -81,16 +66,62 @@ module TTML
     end
 
     def title
-      doc.xpath("//#{ @meta_ns }:title")[0].children[0].content
+      doc.xpath("//#{ meta_ns }:title")[0].children[0].content
     end
 
     def description
-      doc.xpath("//#{ @meta_ns }:description")[0].children[0].content
+      doc.xpath("//#{ meta_ns }:description")[0].children[0].content
     end
 
     def copyright
-      doc.xpath("//#{ @meta_ns }:copyright")[0].children[0].content
+      doc.xpath("//#{ meta_ns }:copyright")[0].children[0].content
     end
 
+    private
+
+    def subs_ns
+      NAMESPACES.each do |type, ns|
+        if ns = ns_lookup(ns)
+          @namespace_type = type
+          return ns
+        end
+      end
+      raise InvalidNamespace
+    end
+
+    def meta_ns
+      NAMESPACES.each do |type, ns|
+        if ns = ns_lookup("#{ns}#metadata")
+          return ns
+        end
+      end
+      raise InvalidNamespace
+    end
+
+    def ns_lookup(name)
+      if @namespaces.invert[name]
+        return @namespaces.invert[name].sub(/^xmlns:/, '')
+      end
+    end
+
+    def parse_time_from_node(node, attribute, line)
+      if namespace_type == :ttaf1
+        if node.attributes[attribute] && (time = node.attributes[attribute].value.to_f)
+          return time
+        else
+          line.error = "#{line.sequence}, Invalid formatting of start timecode, [#{node.attributes[attribute].inspect}]"
+          $stderr.puts line.error if @debug
+        end
+      elsif namespace_type == :ttml1
+        if node.attributes[attribute] && (time = Util.timecode(node.attributes[attribute].value))
+          return time
+        else
+          line.error = "#{line.sequence}, Invalid formatting of start timecode, [#{node.attributes[attribute].inspect}]"
+          $stderr.puts line.error if @debug
+        end
+      else
+        raise UnknownNamespaceType
+      end
+    end
   end
 end

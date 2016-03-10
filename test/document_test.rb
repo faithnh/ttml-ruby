@@ -4,7 +4,7 @@ require 'ttml'
 class DocumentTest < Test::Unit::TestCase
 
   def setup
-    @doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
+    @doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample.xml'))
   end
 
   def test_class
@@ -35,7 +35,7 @@ class DocumentTest < Test::Unit::TestCase
 
   def test_other_file
     # (with different namespaces)
-    doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'sample_2.xml'))
+    doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample_2.xml'))
     assert_equal 'Timed Text DFPX', doc.title
     assert @doc.subtitle_stream.is_a?(Array)
   end
@@ -47,12 +47,12 @@ class DocumentTest < Test::Unit::TestCase
   end
 
   def test_parse
-    doc = TTML::Document.parse(File.join(File.dirname(__FILE__), 'fixtures', 'sample.xml'))
+    doc = TTML::Document.parse(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample.xml'))
     assert_equal 31, doc.lines.length
     assert_equal 1, doc.lines.first.sequence
     assert_equal 31, doc.lines.last.sequence
     assert_equal 358.72, doc.lines.first.start_time
-    assert_equal 362.5, doc.lines.first.end_time
+    assert_equal 362.05, doc.lines.first.end_time
     assert_equal ["<p align=\"left\" ><font color=\"#ffa500\">Signori Consiglieri siete pregati di prendere posto</font></p>"], doc.lines.first.text
   end
 
