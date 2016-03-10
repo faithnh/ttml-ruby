@@ -20,6 +20,7 @@ Or install it yourself as:
 
 Parse an entire TTML file in Ruby:
 
+    require 'ttml'
     doc = TTML::Document.parse("test/sample.xml")
     doc.lines.each do |line|
       puts line.sequence
@@ -32,6 +33,12 @@ Parse an entire TTML file in Ruby:
 Command line example for converting TTML to SRT:
 
     $ ttml2srt test/sample.xml > sample.srt
+
+## Test
+
+Run all tests:
+
+    bundle exec rake
 
 ## Contributing
 
