@@ -34,8 +34,7 @@ class DocumentTest < Test::Unit::TestCase
   end
 
   def test_other_file
-    # (with different namespaces)
-    doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample_2.xml'))
+    doc = TTML::Document.new(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample_dfpx.xml'))
     assert_equal 'Timed Text DFPX', doc.title
     assert @doc.subtitle_stream.is_a?(Array)
   end
@@ -46,7 +45,7 @@ class DocumentTest < Test::Unit::TestCase
     assert_equal 0, @doc.errors.length
   end
 
-  def test_parse
+  def test_ttaf1_parse
     doc = TTML::Document.parse(File.join(File.dirname(__FILE__), 'fixtures', 'ttaf1_sample.xml'))
     assert_equal 31, doc.lines.length
     assert_equal 1, doc.lines.first.sequence
