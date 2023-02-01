@@ -15,6 +15,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = TTML::VERSION
 
-  gem.add_runtime_dependency "nokogiri", "1.14.1"
-  gem.add_runtime_dependency "optimist", "3.0.1"
+  gem.add_runtime_dependency "nokogiri"
+  gem.add_runtime_dependency "optimist", "~> 3.0.1"
 end
