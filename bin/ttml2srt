@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'ttml'
-require 'trollop'
+require 'optimist'
 
-opts = Trollop::options do
+opts = Optimist::options do
   opt :offset, "Offset in seconds to apply when converting", :default => 0
   banner <<EOS
 This script converts a ttml xml file containing subtitles to a SubRip format
@@ -20,11 +20,11 @@ def self.conv2srt fname, offset
   counter = 1
   doc.subtitle_stream.each do |sub|
     # Avoid outputting empty lines
-    cleaned = TTML::Util.clean_tags(sub.content)
+    cleaned = TTML::Util.strip_tags(sub.content)
     next if cleaned.empty?
     b_time = sub['begin'].to_i + offset
     e_time = sub['end'].to_i + offset
-    print "#{ counter }\n#{ TTML::Util.smpte_time(b_time) } --> #{ Ttml::Util.smpte_time(e_time) }\n#{ cleaned }\n\n"
+    print "#{ counter }\n#{ TTML::Util.smpte_time(b_time) } --> #{ TTML::Util.smpte_time(e_time) }\n#{ cleaned }\n\n"
     counter += 1
   end
 end
